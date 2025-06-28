@@ -211,7 +211,7 @@ function displayTanzaku(features) {
 
     div.innerHTML = `
       <img src="${imgURL}" alt="短冊">
-      <div class="text">${wish}★${penname}</div>`;
+      <div class="text">${wish}<br><br>★${penname}</div>`;
 
     // ⬇ フォントサイズを自動縮小（6pxまで）
     const textEl = div.querySelector(".text");
