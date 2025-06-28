@@ -137,7 +137,9 @@
 <div id="tanzaku-container"></div>
 
 <div id="popup" onclick="this.style.display = 'none';">
-<div id="popup-content" onclick="event.stopPropagation();"></div>
+  <div id="popup-content">
+    <!-- popup inner content inserted dynamically -->
+  </div>
 </div>
 
 <script>
@@ -202,7 +204,7 @@ function displayTanzaku(features) {
           <img src="${imgURL}" alt="短冊" style="width: 100%;">
           <div style="
             position: absolute;
-            top: 15%;
+            top: 18%;
             left: 50%;
             transform: translateX(-50%);
             width: 50%;
