@@ -2,123 +2,78 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>短冊ビューア（スマホ対応）</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
     body {
       margin: 0;
-      padding: 0;
+      padding: 10px;
       font-family: sans-serif;
-      background-image: url('https://iccarcgis.maps.arcgis.com/sharing/rest/content/items/eb1fe275b5e84701b7f804c8d8a0704b/data');
+      background: #f0f8ff url('https://iccarcgis.maps.arcgis.com/sharing/rest/content/items/eb1fe275b5e84701b7f804c8d8a0704b/data') no-repeat center center fixed;
       background-size: cover;
-      background-position: center;
-      background-repeat: no-repeat;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 10px;
     }
 
     #age-buttons {
-      position: fixed;
-      top: 0;
-      width: 100%;
-      z-index: 1000;
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
-      background: rgba(255, 255, 255, 0.95);
-      padding: 10px 5px;
-      gap: 5px;
+      gap: 8px;
+      max-width: 400px;
+      margin: 0 auto 20px auto;
     }
 
     #age-buttons button {
-      font-size: 14px;
-      padding: 6px 10px;
-      border-radius: 5px;
-      border: 1px solid #888;
-      background-color: #fff;
+      padding: 12px;
+      font-size: 16px;
       cursor: pointer;
+      border-radius: 6px;
+      border: 1px solid #888;
+      background-color: white;
+      transition: background-color 0.3s;
+      flex: 1 1 30%;
+      min-width: 100px;
     }
 
     #age-buttons button:hover {
-      background-color: #ffddee;
+      background-color: #d0eaff;
     }
 
-    #tanzaku-container {
-      margin-top: 80px;
-      padding: 10px;
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 20px;
+    #tanzaku-list {
+      max-width: 400px;
+      margin: 0 auto;
+      list-style: none;
+      padding: 0;
     }
 
-    @keyframes sway {
-      0% { transform: rotate(-3deg); }
-      50% { transform: rotate(3deg); }
-      100% { transform: rotate(-3deg); }
-    }
-
-    .tanzaku {
-      width: 100px;
-      height: 240px;
-      background: #ffc0cb;
-      border: 5px solid #c71585;
-      border-radius: 10px;
-      position: relative;
-      animation: sway 3s infinite ease-in-out;
-      transform-origin: top center;
+    #tanzaku-list li {
+      background: #fff9e6;
+      border: 4px double #2e7d32;
+      border-radius: 8px;
+      padding: 12px 16px;
+      margin-bottom: 10px;
+      box-shadow: 0 1px 3px rgb(0 0 0 / 0.1);
       cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .text {
-      writing-mode: vertical-rl;
-      font-size: 13px;
-      color: black;
-      padding: 10px 2px;
-      text-align: center;
-      word-break: break-word;
+      display: block;
+      font-size: 16px;
       line-height: 1.4;
+      white-space: pre-wrap;
+      color: #333;
     }
 
-    #popup {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      background-color: rgba(0, 0, 0, 0.6);
-      justify-content: center;
-      align-items: center;
-      z-index: 2000;
-    }
-
-    #popup-content {
-      background-color: white;
-      padding: 20px;
-      border-radius: 10px;
-      max-width: 90%;
-      text-align: center;
-      font-size: 18px;
+    #tanzaku-list li .penname {
+      font-size: 14px;
+      color: #2e7d32;
+      margin-top: 8px;
+      text-align: right;
       font-weight: bold;
-      line-height: 1.6;
     }
 
-    @media (max-width: 600px) {
-      .tanzaku {
-        width: 80px;
-        height: 200px;
-      }
-
-      .text {
-        font-size: 11px;
-      }
-
-      #age-buttons button {
-        font-size: 12px;
-      }
+    #tanzaku-list li.expanded {
+      background-color: #e0f0ff;
     }
   </style>
 </head>
@@ -136,65 +91,61 @@
   <button onclick="filterByAge()">全て表示</button>
 </div>
 
-<div id="tanzaku-container"></div>
-
-<div id="popup" onclick="popup.style.display='none'">
-  <div id="popup-content" onclick="event.stopPropagation();"></div>
-</div>
+<ul id="tanzaku-list"></ul>
 
 <script>
-const container = document.getElementById("tanzaku-container");
-const popup = document.getElementById("popup");
-const popupContent = document.getElementById("popup-content");
+  const list = document.getElementById("tanzaku-list");
+  const ageField = "field_4";
+  const confirmField = "確認";
+  let currentWhere = `${confirmField}='済'`; // 初期表示は「済」だけ
 
-const confirmField = "確認";
-const ageField = "field_4";
-let currentAgeWhere = "";
+  function fetchAndDisplay() {
+    const url = `https://services5.arcgis.com/oISMFKlA90RsGqBJ/arcgis/rest/services/survey123_428ee531d6f64629ad1fb10db7e23778_results/FeatureServer/0/query?where=${encodeURIComponent(currentWhere)}&outFields=field_1,field_2,${ageField},${confirmField}&orderByFields=objectid desc&resultRecordCount=100&f=json`;
 
-function buildWhereClause() {
-  return `${confirmField}='済'` + (currentAgeWhere ? ` AND ${ageField}='${currentAgeWhere}'` : "");
-}
+    fetch(url)
+      .then(res => res.json())
+      .then(data => {
+        const features = data.features || [];
+        displayList(features);
+      });
+  }
 
-function fetchAndDisplay() {
-  const whereClause = buildWhereClause();
-  const url = `https://services5.arcgis.com/oISMFKlA90RsGqBJ/arcgis/rest/services/survey123_428ee531d6f64629ad1fb10db7e23778_results/FeatureServer/0/query?where=${encodeURIComponent(whereClause)}&outFields=field_1,field_2,${ageField},${confirmField}&orderByFields=objectid desc&resultRecordCount=16&f=json`;
+  function displayList(features) {
+    list.innerHTML = "";
+    features.forEach(feature => {
+      const attr = feature.attributes;
+      const penname = attr["field_1"] || "";
+      const wish = attr["field_2"] || "";
+      const li = document.createElement("li");
 
-  fetch(url)
-    .then(res => res.json())
-    .then(data => {
-      const features = data.features || [];
-      displayTanzaku(features);
+      li.innerHTML = `
+        ${wish}
+        <div class="penname">★ ${penname}</div>
+      `;
+
+      li.onclick = () => {
+        if (li.classList.contains("expanded")) {
+          li.classList.remove("expanded");
+        } else {
+          document.querySelectorAll("#tanzaku-list li.expanded").forEach(el => el.classList.remove("expanded"));
+          li.classList.add("expanded");
+        }
+      };
+
+      list.appendChild(li);
     });
-}
+  }
 
-function filterByAge(ageGroup) {
-  currentAgeWhere = ageGroup || "";
+  function filterByAge(ageGroup) {
+    if (ageGroup) {
+      currentWhere = `${confirmField}='済' AND ${ageField}='${ageGroup}'`;
+    } else {
+      currentWhere = `${confirmField}='済'`;
+    }
+    fetchAndDisplay();
+  }
+
   fetchAndDisplay();
-}
-
-function displayTanzaku(features) {
-  container.innerHTML = "";
-  features.forEach((feature, index) => {
-    const attr = feature.attributes;
-    const penname = attr["field_1"] || "";
-    const wish = attr["field_2"] || "";
-
-    const div = document.createElement("div");
-    div.className = "tanzaku";
-    div.style.animationDelay = `${Math.random() * 3}s`;
-
-    div.innerHTML = `<div class="text">${wish}<br><br>★${penname}</div>`;
-
-    div.onclick = () => {
-      popupContent.innerHTML = `<div style="writing-mode: vertical-rl;">${wish}<br><br>★${penname}</div>`;
-      popup.style.display = "flex";
-    };
-
-    container.appendChild(div);
-  });
-}
-
-fetchAndDisplay();
 </script>
 
 </body>
