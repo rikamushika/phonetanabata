@@ -69,24 +69,28 @@
       width: 100%;
       display: block;
     }
+      .text {
+  position: absolute;
+  top: 12%;
+  left: 50%;
+  transform: translateX(-50%);
+  height: 76%;
+  width: auto;
+  max-width: 100%;
+  padding: 0 4px;
+  color: black;
+  font-size: 11px;
+  writing-mode: vertical-rl;
+  text-align: center;
+  overflow: hidden;
+  word-break: break-word;
+  line-height: 1.2;
+  background-color: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 
-    .text {
-      position: absolute;
-      top: 12%;
-      left: 50%;
-      transform: translateX(-50%);
-      height: 76%;
-      width: 100%;
-      padding: 0 2px;
-      color: black;
-      font-size: 11px;
-      writing-mode: vertical-rl;
-      text-align: center;
-      overflow: hidden;
-      word-break: break-word;
-      line-height: 1.1;
-      background-color: transparent;
-    }
 
     #popup {
       display: none;
