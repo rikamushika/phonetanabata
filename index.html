@@ -2,9 +2,9 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>短冊ビューア（スマホ対応）</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>短冊ビューア（スマホ対応・画像付き）</title>
   <style>
     body {
       margin: 0;
@@ -59,28 +59,34 @@
 
     .tanzaku {
       width: 100px;
-      height: 240px;
-      background: #ffc0cb;
-      border: 5px solid #c71585;
-      border-radius: 10px;
       position: relative;
       animation: sway 3s infinite ease-in-out;
       transform-origin: top center;
       cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
     }
 
-    .text {
-      writing-mode: vertical-rl;
-      font-size: 13px;
-      color: black;
-      padding: 10px 2px;
-      text-align: center;
-      word-break: break-word;
-      line-height: 1.4;
+    .tanzaku img {
+      width: 100%;
+      display: block;
     }
+
+.text {
+  position: absolute;
+  top: 12%;
+  left: 50%;
+  transform: translateX(-50%);
+  height: 76%;
+  max-height: 80%;
+  width: auto;
+  padding: 2px;
+  color: black;
+  font-size: 12px;
+  writing-mode: vertical-rl;
+  text-align: center;
+  overflow: hidden;
+  word-break: break-word;
+  line-height: 1.2;
+}
 
     #popup {
       display: none;
@@ -109,7 +115,6 @@
     @media (max-width: 600px) {
       .tanzaku {
         width: 80px;
-        height: 200px;
       }
 
       .text {
@@ -147,6 +152,8 @@ const container = document.getElementById("tanzaku-container");
 const popup = document.getElementById("popup");
 const popupContent = document.getElementById("popup-content");
 
+const imgURL = "https://iccarcgis.maps.arcgis.com/sharing/rest/content/items/63b21d4621df4c6eb4ffc05ecad72bd6/data";
+
 const confirmField = "確認";
 const ageField = "field_4";
 let currentAgeWhere = "";
@@ -183,12 +190,39 @@ function displayTanzaku(features) {
     div.className = "tanzaku";
     div.style.animationDelay = `${Math.random() * 3}s`;
 
-    div.innerHTML = `<div class="text">${wish}<br><br>★${penname}</div>`;
+    div.innerHTML = `
+      <img src="${imgURL}" alt="短冊">
+      <div class="text">${wish}<br><br>★${penname}</div>`;
 
     div.onclick = () => {
-      popupContent.innerHTML = `<div style="writing-mode: vertical-rl;">${wish}<br><br>★${penname}</div>`;
-      popup.style.display = "flex";
-    };
+  popupContent.innerHTML = `
+    <div style="position: relative; width: 100%; max-width: 400px;">
+      <img src="${imgURL}" alt="短冊" style="width: 100%; display: block;">
+      <div style="
+        position: absolute;
+        top: 15%;
+        left: 50%;
+        transform: translateX(-50%);
+        height: 70%;
+        max-height: 80%;
+        width: auto;
+        padding: 5px;
+        color: black;
+        font-size: 20px;
+        font-weight: bold;
+        writing-mode: vertical-rl;
+        text-align: center;
+        overflow: hidden;
+        word-break: break-word;
+        line-height: 1.5;
+        background-color: transparent;
+      ">
+        ${wish}<br><br>★${penname}
+      </div>
+    </div>`;
+  popup.style.display = "flex";
+};
+
 
     container.appendChild(div);
   });
@@ -199,3 +233,4 @@ fetchAndDisplay();
 
 </body>
 </html>
+
