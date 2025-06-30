@@ -1,5 +1,4 @@
 /index.html
-<!DOCTYPE html>
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
@@ -9,7 +8,7 @@
     body {
       margin: 0;
       padding: 0;
-      background: #f0f8ff;
+      background-color: #002244; /* 紺色背景 */
       font-family: sans-serif;
       background-image: url('https://iccarcgis.maps.arcgis.com/sharing/rest/content/items/eb1fe275b5e84701b7f804c8d8a0704b/data');
       background-size: cover;
@@ -23,7 +22,7 @@
       width: 100%;
       min-height: 100vh;
       overflow-y: auto;
-      padding-bottom: 180px;
+      padding-bottom: 200px;
     }
 
     @keyframes sway {
@@ -119,9 +118,26 @@
     #age-buttons button:hover {
       background-color: #d0eaff;
     }
+
+    #count-display {
+      position: fixed;
+      top: 110px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #fff8c6; /* 薄い黄色 */
+      color: #333;
+      padding: 8px 16px;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: bold;
+      border: 2px solid #ffd700; /* 金色の枠線 */
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+      z-index: 998;
+    }
   </style>
 </head>
 <body>
+
 <div id="age-buttons">
   <button onclick="filterByAge('10代以下')">10代以下</button>
   <button onclick="filterByAge('20代')">20代</button>
@@ -133,6 +149,9 @@
   <button onclick="filterByAge('80代以上')">80代以上</button>
   <button onclick="filterByAge()">全て表示</button>
 </div>
+
+<!-- 投稿総数表示 -->
+<div id="count-display">投稿総数：0 件</div>
 
 <div id="tanzaku-container"></div>
 
@@ -146,6 +165,7 @@
 const container = document.getElementById("tanzaku-container");
 const popup = document.getElementById("popup");
 const popupContent = document.getElementById("popup-content");
+const countDisplay = document.getElementById("count-display");
 const imgURL = "https://iccarcgis.maps.arcgis.com/sharing/rest/content/items/63b21d4621df4c6eb4ffc05ecad72bd6/data";
 
 const confirmField = "確認";
@@ -175,9 +195,11 @@ function filterByAge(ageGroup) {
 
 function displayTanzaku(features) {
   container.innerHTML = "";
+  countDisplay.textContent = `投稿総数：${features.length} 件`;
+
   const spacingX = 120;
   const spacingY = 250;
-  const columns = 3; // モバイル想定で少なめに
+  const columns = 3;
 
   features.forEach((feature, index) => {
     const attr = feature.attributes;
@@ -235,6 +257,7 @@ fetchAndDisplay();
 </script>
 </body>
 </html>
+
 
 
 
