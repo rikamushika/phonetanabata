@@ -10,7 +10,7 @@
       margin: 0;
       padding: 0;
       background-color: #002244;
-      font-family: sans-serif;
+      font-family: "Noto Sans JP", "Yu Gothic", sans-serif;
       background-image: url('https://iccarcgis.maps.arcgis.com/sharing/rest/content/items/eb1fe275b5e84701b7f804c8d8a0704b/data');
       background-size: cover;
       background-position: center;
@@ -60,7 +60,7 @@
       text-align: center;
       overflow: hidden;
       word-break: break-word;
-      line-height: 1.1;
+      line-height: 1.2;
       box-sizing: border-box;
     }
 
@@ -136,7 +136,6 @@
       z-index: 998;
     }
 
-    /* 流れ星スタイル */
     .shooting-star {
       position: fixed;
       top: -50px;
@@ -148,14 +147,8 @@
     }
 
     @keyframes starFall {
-      0% {
-        top: -50px;
-        opacity: 1;
-      }
-      100% {
-        top: 100%;
-        opacity: 0;
-      }
+      0% { top: -50px; opacity: 1; }
+      100% { top: 100%; opacity: 0; }
     }
   </style>
 </head>
@@ -178,9 +171,7 @@
 <div id="tanzaku-container"></div>
 
 <div id="popup" onclick="this.style.display = 'none';">
- <div id="popup-content">
-    <!-- inner content inserted dynamically -->
-  </div>
+ <div id="popup-content"></div>
 </div>
 
 <script>
@@ -224,6 +215,10 @@ function createShootingStar() {
   setTimeout(() => star.remove(), 3000);
 }
 
+function verticalText(text) {
+  return text.split("").map(c => `<div style="transform: rotate(90deg); margin-bottom: 2px;">${c}</div>`).join("");
+}
+
 function displayTanzaku(features) {
   container.innerHTML = "";
   countDisplay.textContent = `願いの数：${features.length} 枚`;
@@ -252,40 +247,40 @@ function displayTanzaku(features) {
                      <div class="text">${wish}<br>★${penname}</div>`;
 
     div.onclick = () => {
-      // ★ 流れ星5つ連続
-      for (let i = 0; i < 5; i++) {
-        setTimeout(createShootingStar, i * 400);
-      }
+  for (let i = 0; i < 5; i++) {
+    setTimeout(createShootingStar, i * 400);
+  }
 
-      popupContent.innerHTML = `
-        <div style="position: relative; width: 100%; max-width: 400px; margin: 0 auto;">
-          <img src="${imgURL}" alt="短冊" style="width: 100%;">
-          <div style="
-            position: absolute;
-            top: 18%;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 50%;
-            max-height: 70%;
-            padding: 5px;
-            color: black;
-            font-size: 20px;
-            font-weight: bold;
-            background-color: transparent;
-            writing-mode: vertical-rl;
-            text-align: center;
-            overflow: hidden;
-            word-break: break-word;
-            line-height: 2.0;
-            box-sizing: border-box;
-            font-family: "Noto Sans JP", "Yu Gothic", sans-serif;
+  popupContent.innerHTML = `
+    <div style="position: relative; width: 100%; max-width: 400px; margin: 0 auto;">
+      <img src="${imgURL}" alt="短冊" style="width: 100%;">
+      <div style="
+        position: absolute;
+        top: 18%;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 50%;
+        max-height: 70%;
+        padding: 5px;
+        color: black;
+        font-size: 20px;
+        font-weight: bold;
+        background-color: transparent;
+        writing-mode: vertical-rl;
+        text-orientation: upright;
+        line-height: 2.0;
+        font-family: 'Noto Sans JP', 'Yu Gothic', sans-serif;
+        text-align: center;
+        overflow: hidden;
+        word-break: break-word;
+        box-sizing: border-box;
+      ">
+        ${wish}<br><br>★${penname}
+      </div>
+    </div>`;
+  popup.style.display = "flex";
+};
 
-          ">
-            ${wish}<br><br>★${penname}
-          </div>
-        </div>`;
-      popup.style.display = "flex";
-    };
 
     container.appendChild(div);
   });
