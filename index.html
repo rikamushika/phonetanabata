@@ -150,10 +150,23 @@
       0% { top: -50px; opacity: 1; }
       100% { top: 100%; opacity: 0; }
     }
+    #warning-message {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  color: yellow;
+  text-align: center;
+  padding: 6px 0;
+  font-size: 14px;
+  z-index: 2000;
+}
+
   </style>
 </head>
 <body>
-
+<div id="warning-message">※一部端末では正しく表示されない場合があります</div>
 <div id="age-buttons">
   <button onclick="filterByAge('10代以下')">10代以下</button>
   <button onclick="filterByAge('20代')">20代</button>
