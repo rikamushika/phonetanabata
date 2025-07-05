@@ -162,6 +162,10 @@
   padding: 6px 10px;
   border-radius: 8px;
   z-index: 998;
+  white-space: nowrap; /* ← これが1行で折り返さない指定！ */
+  max-width: 90vw; /* 念のため端末幅で制限 */
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 
