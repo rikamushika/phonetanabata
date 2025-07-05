@@ -150,23 +150,24 @@
       0% { top: -50px; opacity: 1; }
       100% { top: 100%; opacity: 0; }
     }
-    #warning-message {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
+#warning-message {
+  position: absolute;
+  top: 150px; /* count-displayがtop: 110pxなので少し下に配置 */
+  left: 50%;
+  transform: translateX(-50%);
   color: yellow;
-  text-align: center;
-  padding: 6px 0;
   font-size: 14px;
-  z-index: 2000;
+  text-align: center;
+  background-color: rgba(0, 0, 0, 0.5);
+  padding: 6px 10px;
+  border-radius: 8px;
+  z-index: 998;
 }
+
 
   </style>
 </head>
 <body>
-<div id="warning-message">※一部端末では正しく表示されない場合があります</div>
 <div id="age-buttons">
   <button onclick="filterByAge('10代以下')">10代以下</button>
   <button onclick="filterByAge('20代')">20代</button>
@@ -180,6 +181,7 @@
 </div>
 
 <div id="count-display">願いの数：0 枚</div>
+<div id="warning-message">※一部端末では正しく表示されない場合があります</div>
 
 <div id="tanzaku-container"></div>
 
